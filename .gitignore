@@ -1,2 +1,2 @@
-docs/tasks.md
-config/.env
+docs.tasks.md
+*.env
