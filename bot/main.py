@@ -1,11 +1,14 @@
 import telebot
 
+from bot.handlers import start, balance
 from config.settings import BOT_TOKEN
 
 bot = telebot.TeleBot(token=BOT_TOKEN)
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.reply_to(message, 'Hello World! ')
+start.register_handlers(bot)
+balance.register_handlers(bot)
 
-bot.polling()
+if __name__ == '__main__':
+    current_balance = 0.00
+    bot.polling(none_stop=True)
+
