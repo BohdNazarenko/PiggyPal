@@ -1,14 +1,33 @@
+"""bot/main.py
+
+Main entry point for the PiggyPal Telegram bot.
+Creates the bot instance, registers handlers,
+and starts the long‑polling loop.
+"""
 import telebot
 
 from bot.handlers import start, balance
 from config.settings import BOT_TOKEN
 
-bot = telebot.TeleBot(token=BOT_TOKEN)
 
-start.register_handlers(bot)
-balance.register_handlers(bot)
+class PiggyPalBot:
+    def __init__(self, token: str):
+        # Create a TeleBot instance using the token provided by BotFather.
+        self.bot = telebot.TeleBot(token=token)
+        # Current user balance stored in memory only.
+        # TODO: replace this with persistent storage (e.g. PostgreSQL).
+        self.current_balance = 0.00
+
+
+    def register_handlers(self):
+        start.register_handlers(self.bot)
+        balance.register_handlers(self.bot)
+
+    def run(self):
+        # none_stop=True keeps the bot running even if a handler raises.
+        self.bot.polling(none_stop=True)
 
 if __name__ == '__main__':
-    current_balance = 0.00
-    bot.polling(none_stop=True)
-
+    piggy_bot = PiggyPalBot(BOT_TOKEN)
+    piggy_bot.register_handlers()
+    piggy_bot.run()

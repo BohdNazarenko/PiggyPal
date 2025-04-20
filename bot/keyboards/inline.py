@@ -1,8 +1,22 @@
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
-def set_balance_keyboard():
-    markup = InlineKeyboardMarkup()
-    set_balance_button = InlineKeyboardButton("Find out your balance", callback_data="set_balance")
-    markup.add(set_balance_button)
-    return markup
+class InlineKeyboard:
+    """
+    Namespace‑style container for inline keyboard builders.
+    Each method returns a ready‑to‑use InlineKeyboardMarkup.
+    """
+
+    @staticmethod
+    def set_start_balance() -> InlineKeyboardMarkup:
+
+        markup = InlineKeyboardMarkup()
+
+        markup.add(
+            InlineKeyboardButton(
+                "Set your starting balance",
+                callback_data="set_balance"
+            )
+        )
+
+        return markup
