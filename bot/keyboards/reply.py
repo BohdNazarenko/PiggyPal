@@ -5,8 +5,12 @@ class ReplyKeyboard:
 
 
     @staticmethod
-    def get_balance_keyboard():
+    def get_main_keyboard() -> ReplyKeyboardMarkup:
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-        button = KeyboardButton("Balance")
-        keyboard.add(button)
+        keyboard.add(
+            KeyboardButton("Balance"),
+            KeyboardButton("History")
+        )
         return keyboard
+
+
