@@ -5,13 +5,11 @@ services:
     container_name: piggypal_postgres
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: piggypal
-      POSTGRES_DB: piggy_pal_db
+      POSTGRES_USER: piggy
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: piggypal_db
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - C:\Users\bnaza\OneDrive\Документы\BigData_projects\PiggyPal\pgdata:/var/lib/postgresql/data
 
-volumes:
-  pgdata:

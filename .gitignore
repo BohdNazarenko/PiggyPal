@@ -1,3 +1,4 @@
 docs.tasks.md
 config/.env
 *.env
+/pgdata/

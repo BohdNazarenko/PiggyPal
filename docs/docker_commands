@@ -1,0 +1,20 @@
+#Docker build
+docker build -t piggypal-postgres .
+
+#Docker run:
+docker run -d --name piggypal-db -p 5432:5432 piggypal-postgres
+
+#Docker remove old container
+docker rm -f piggypal-db
+
+#Docker delete image
+docker rmi piggypal-postgres
+
+#Go into my db
+docker exec -it piggypal-db psql -U piggy -d piggypal
+
+
+docker run --name piggy -p 5432:5432 -e POSTGRES_PASSWORD=1234 -d postgres:15
+
+
+
