@@ -11,7 +11,11 @@ class CategoryRepository:
             CREATE TABLE IF NOT EXISTS categories(
                 category_id   SERIAL PRIMARY KEY,
                 category      VARCHAR(100) NOT NULL,
-                category_type_id INTEGER      NOT NULL
+                category_type_id INTEGER   NOT NULL
+                    REFERENCES categories_type(category_type_id)
+                    ON DELETE RESTRICT
+                    ON UPDATE CASCADE
+                    
         );
         """
 
