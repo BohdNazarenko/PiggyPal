@@ -40,7 +40,8 @@ class BalanceHandler:
         def check_balance(message):
             self.bot.send_message(
                 message.chat.id,
-                f"Your current balance is {self._balance} zloty"
+                f"Your current balance is {self._balance} zloty",
+                reply_markup=ReplyKeyboard.get_main_keyboard()
             )
 
         @self.bot.message_handler(func=lambda message: message.text == "History")

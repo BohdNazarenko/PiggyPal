@@ -34,3 +34,26 @@ class ExpensesRepository:
             raise
         finally:
             conn.close()
+
+
+    def add_expense(self, category_id: int, amount: float) -> int:
+
+
+        insert_sql = """
+        INSERT INTO expenses (category_id, amount)
+        VALUES(%s, %s)
+        RETURNING expense_id;
+        """
+
+        conn = self.db.connect_to_db()
+
+        try:
+            with conn.cursor() as cur:
+                cur.execute(insert_sql, (category_id, amount))
+                new_id = cur.fetchone()[0]
+                conn.commit()
+            return new_id
+        except DatabaseError:
+            raise
+        finally:
+            conn.close()

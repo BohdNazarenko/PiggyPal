@@ -25,8 +25,28 @@ class GoalsRepository:
                 cur.execute(create_sql)
                 conn.commit()
         except DatabaseError as e:
-            conn.rollback()
             print(f"Error creating goals table: {e}")
+            raise
+        finally:
+            conn.close()
+
+    def add_goal(self, stuff_name: str, price: float, desc: str | None = None) -> int:
+
+        sql_insert = """
+        INSERT INTO goals (stuff_name, price, description)
+        VALUES (%s, %s, %s)
+        RETURNING goal_id;
+        """
+
+        conn = self.db.connect_to_db()
+
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql_insert, (stuff_name, price, desc))
+                conn.commit()
+                return cur.fetchone()[0]
+        except ValueError as e:
+            print(f"Error inserting goal: {e}")
             raise
         finally:
             conn.close()

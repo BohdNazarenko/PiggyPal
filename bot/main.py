@@ -7,7 +7,10 @@ and starts the long‑polling loop.
 import telebot
 
 from bot.database import init_db
-from bot.handlers import start, balance
+from bot.handlers import start_handler, balance_handler, add_actions, expenses_handler, incomes_handler, debt_handler, \
+    goal_handler
+from bot.handlers.goal_handler import goal_register_handler
+from bot.handlers.incomes_handler import income_register_handler
 from config.settings import BOT_TOKEN
 
 
@@ -21,8 +24,14 @@ class PiggyPalBot:
 
 
     def register_handlers(self):
-        balance_handler = balance.BalanceHandler(self.bot)
-        start.register_handlers(self.bot, balance_handler)
+        balance_handler.register_handlers(self.bot)
+        start_handler.register_handlers(self.bot, balance_handler)
+        add_actions.register_handlers(self.bot)
+        expenses_handler.expenses_register_handlers(self.bot)
+        incomes_handler.income_register_handler(self.bot)
+        debt_handler.debt_register_handlers(self.bot)
+        goal_handler.goal_register_handler(self.bot)
+
 
     def run(self):
         # none_stop=True keeps the bot running even if a handler raises.

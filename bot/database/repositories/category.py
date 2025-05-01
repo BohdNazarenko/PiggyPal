@@ -1,3 +1,5 @@
+from psycopg2.extras import RealDictCursor
+
 from bot.database.db import DataBase
 
 
@@ -14,8 +16,7 @@ class CategoryRepository:
                 category_type_id INTEGER   NOT NULL
                     REFERENCES categories_type(category_type_id)
                     ON DELETE RESTRICT
-                    ON UPDATE CASCADE
-                    
+                    ON UPDATE CASCADE             
         );
         """
 
@@ -58,3 +59,25 @@ class CategoryRepository:
             conn.commit()
         finally:
             self.db.close()
+
+
+    def list_by_type(self, type_id: int) -> list[dict]:
+
+        sql_query = """
+        SELECT  category_id,
+                category,
+                category_type_id
+        FROM categories
+        WHERE category_type_id = %s
+        ORDER BY category_id
+        """
+
+        conn = self.db.connect_to_db()
+
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute(sql_query, (type_id,))
+                return cur.fetchall()
+        finally:
+            conn.close()
+

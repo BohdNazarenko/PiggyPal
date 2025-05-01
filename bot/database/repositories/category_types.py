@@ -1,3 +1,5 @@
+from psycopg2.extras import RealDictCursor
+
 from bot.database import DataBase
 
 
@@ -24,7 +26,6 @@ class CategoryTypeRepository:
              "description": "Rent, home interior, loans, debts, financial commitments"},
             {"category_type": "Entertainment and clothing", "description": "Leisure activities, clothing"},
             {"category_type": "Transport & Technology", "description": "Transport, electronics, communication"},
-            {"category_type": "Money incomes", "description": "Salary, all money income methods"},
         ]
 
         conn = self.db.connect_to_db()
@@ -42,3 +43,23 @@ class CategoryTypeRepository:
             conn.commit()
         finally:
             self.db.close()
+
+
+
+    def list_all(self) -> list[dict]:
+
+        sql_query = """
+        SELECT  category_type_id,
+                category_type,
+                description
+        FROM categories_type
+        ORDER BY category_type_id;
+        """
+
+        conn = self.db.connect_to_db()
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute(sql_query)
+                return cur.fetchall()
+        finally:
+            conn.close()
