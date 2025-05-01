@@ -3,14 +3,14 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 class ReplyKeyboard:
 
-
     @staticmethod
     def get_main_keyboard() -> ReplyKeyboardMarkup:
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-        keyboard.add(
+        keyboard.row(
             KeyboardButton("Balance"),
-            KeyboardButton("History")
+            KeyboardButton("History"),
+        )
+        keyboard.row(
+            KeyboardButton("Add")
         )
         return keyboard
-
-

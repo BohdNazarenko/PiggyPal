@@ -1,29 +1,38 @@
 import psycopg2
-from psycopg2.extras import DictCursor
+from psycopg2.extras import RealDictCursor
 
-DB_NAME = "piggy_pal_db"
-DB_USER = "postgres"
-DB_PASSWORD = "piggypal"
-DB_HOST = "localhost"
-DB_PORT = 5432
+from config.settings import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 
-def connect_to_db():
-    try:
-        conn = psycopg2.connect(
-            database=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            port=DB_PORT,
-        )
-        print("Connected to database")
-        cursor = conn.cursor()
-        cursor.execute("SELECT VERSION()")
-        db_version = cursor.fetchone()
-        print("Database version: %s " % db_version)
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        print(f"Error connecting to database: {e}")
-        return None
+class DataBase:
+
+    def __init__(self):
+        self._conn = None
+
+    def connect_to_db(self):
+        if self._conn is None or self._conn.closed:
+            self._conn = psycopg2.connect(
+                database=DB_NAME,
+                user=DB_USER,
+                password=DB_PASSWORD,
+                host=DB_HOST,
+                port=DB_PORT,
+            )
+        return self._conn
+
+    def close(self):
+        if self._conn and not self._conn.closed:
+            self._conn.close()
+            self._conn = None
+
+    def cursor(self, dict_cursor: bool = False):
+        conn = self.connect_to_db()
+        if dict_cursor:
+            return conn.cursor(cursor_factory=RealDictCursor)
+        return conn.cursor()
+
+    def __enter__(self, ext_type, exc, tb):
+        return self
+
+    def __exit__(self):
+        self.close()

@@ -1,5 +1,5 @@
 from telebot.types import Message
-from bot.handlers.balance import BalanceHandler
+from bot.handlers.balance_handler import BalanceHandler
 
 
 class StartHandler:
@@ -11,7 +11,6 @@ class StartHandler:
 
 
     def _register(self):
-
         @self.bot.message_handler(commands=['start'])
         def start(message: Message):
             self.bot.send_message(
