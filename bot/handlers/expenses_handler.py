@@ -1,5 +1,5 @@
 from telebot.types import Message, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from bot.database import DataBase, ExpensesRepository, CategoryRepository, CategoryTypeRepository
+from bot.database import DataBase, ExpensesRepository, CategoryRepository, CategoryTypeRepository, BalanceRepository
 from bot.keyboards.reply import ReplyKeyboard
 
 
@@ -8,6 +8,7 @@ class ExpensesHandler:
     def __init__(self, bot):
         self.bot = bot
         self.db = DataBase()
+        self.balance_repo = BalanceRepository(self.db)
         self.category_type_repo = CategoryTypeRepository(self.db)
         self.category_repo = CategoryRepository(self.db)
         self.expense_repo = ExpensesRepository(self.db)
@@ -89,6 +90,9 @@ class ExpensesHandler:
                 )
 
             exp_id = self.expense_repo.add_expense(user_id=chat_id,category_id=categ_id, amount=amount)
+
+            new_balance = self.balance_repo.update_balance(chat_id, -amount)
+
             self.bot.send_message(
                 chat_id,
                 #TODO: change it for human text
