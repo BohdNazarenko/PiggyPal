@@ -1,4 +1,5 @@
 from bot.database.db import DataBase
+from bot.database.repositories.balance import BalanceRepository
 from bot.database.repositories.category import CategoryRepository
 from bot.database.repositories.category_types import CategoryTypeRepository
 from bot.database.repositories.debts import DebtRepository
@@ -9,6 +10,7 @@ from bot.database.repositories.incomes import IncomesRepository
 
 def init_db():
     database = DataBase()
+    BalanceRepository(database).init_table()
     CategoryTypeRepository(database).init_table()
     CategoryRepository(database).init_table()
     ExpensesRepository(database).init_table()

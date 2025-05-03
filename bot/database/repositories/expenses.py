@@ -12,15 +12,17 @@ class ExpensesRepository:
         create_sql = """
         CREATE TABLE IF NOT EXISTS expenses (
         expense_id      SERIAL PRIMARY KEY,
+        user_id         BIGINT  NOT NULL 
+                        REFERENCES balance(user_id)
+                        ON DELETE CASCADE,
         category_id     INTEGER NOT NULL
-            REFERENCES categories(category_id)
-            ON DELETE RESTRICT
-            ON UPDATE CASCADE,
+                        REFERENCES categories(category_id)
+                        ON DELETE RESTRICT
+                        ON UPDATE CASCADE,
         amount          NUMERIC(10,2) NOT NULL,
         created_at      TIMESTAMP DEFAULT NOW()
         );
         """
-
 
         conn = self.db.connect_to_db()
 
@@ -36,12 +38,12 @@ class ExpensesRepository:
             conn.close()
 
 
-    def add_expense(self, category_id: int, amount: float) -> int:
+    def add_expense(self, user_id: int, category_id: int, amount: float) -> int:
 
 
         insert_sql = """
-        INSERT INTO expenses (category_id, amount)
-        VALUES(%s, %s)
+        INSERT INTO expenses (user_id, category_id, amount)
+        VALUES(%s, %s, %s)
         RETURNING expense_id;
         """
 
@@ -49,7 +51,7 @@ class ExpensesRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(insert_sql, (category_id, amount))
+                cur.execute(insert_sql, (user_id, category_id, amount))
                 new_id = cur.fetchone()[0]
                 conn.commit()
             return new_id

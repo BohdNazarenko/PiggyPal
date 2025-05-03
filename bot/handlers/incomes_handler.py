@@ -35,7 +35,7 @@ class IncomeHandler:
                     "Invalid number. Please enter a valid income amount:"
                 )
 
-            income_id = self.incomes_repo.add_income(amount)
+            income_id = self.incomes_repo.add_income(chat_id, amount)
             self.bot.send_message(
                 chat_id,
                 f"Income #{income_id} recorded: {amount:.2f}",

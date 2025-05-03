@@ -11,6 +11,9 @@ class GoalsRepository:
         create_sql = """
         CREATE TABLE IF NOT EXISTS goals (
         goal_id     SERIAL PRIMARY KEY,
+         user_id         BIGINT  NOT NULL 
+                        REFERENCES balance(user_id)
+                        ON DELETE CASCADE, 
         stuff_name  VARCHAR(25) NOT NULL,
         price       NUMERIC(10, 2) NOT NULL,
         description TEXT,
@@ -30,11 +33,11 @@ class GoalsRepository:
         finally:
             conn.close()
 
-    def add_goal(self, stuff_name: str, price: float, desc: str | None = None) -> int:
+    def add_goal(self,user_id: int, stuff_name: str, price: float, desc: str | None = None) -> int:
 
         sql_insert = """
-        INSERT INTO goals (stuff_name, price, description)
-        VALUES (%s, %s, %s)
+        INSERT INTO goals (user_id, stuff_name, price, description)
+        VALUES (%s, %s, %s, %s)
         RETURNING goal_id;
         """
 
@@ -42,7 +45,7 @@ class GoalsRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(sql_insert, (stuff_name, price, desc))
+                cur.execute(sql_insert, (user_id, stuff_name, price, desc))
                 conn.commit()
                 return cur.fetchone()[0]
         except ValueError as e:

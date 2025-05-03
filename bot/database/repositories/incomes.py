@@ -1,4 +1,3 @@
-from pandas.core.construction import ensure_wrapped_if_datetimelike
 from psycopg2 import DatabaseError, connect
 
 from bot.database import DataBase
@@ -15,6 +14,9 @@ class IncomesRepository:
         create_sql = """
         CREATE TABLE IF NOT EXISTS incomes (
         income_id   SERIAL PRIMARY KEY,
+        user_id     BIGINT  NOT NULL 
+                    REFERENCES balance(user_id)
+                    ON DELETE CASCADE,
         amount      NUMERIC(10, 2) NOT NULL,
         created_at  TIMESTAMP DEFAULT NOW()
         );
@@ -33,11 +35,11 @@ class IncomesRepository:
         finally:
             conn.close()
 
-    def add_income(self, amount):
+    def add_income(self, user_id: int, amount: float):
 
         insert_sql = """
-        INSERT INTO incomes (amount)
-        VALUES (%s)
+        INSERT INTO incomes(user_id, amount)
+        VALUES (%s, %s)
         RETURNING income_id;
         """
 
@@ -45,7 +47,7 @@ class IncomesRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(insert_sql, (amount,))
+                cur.execute(insert_sql, (user_id, amount))
                 new_id = cur.fetchone()[0]
                 conn.commit()
             return new_id

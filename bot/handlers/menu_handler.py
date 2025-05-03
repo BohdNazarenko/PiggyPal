@@ -3,7 +3,7 @@ from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from bot.keyboards.reply import ReplyKeyboard
 
 
-class AddHandler:
+class MenuHandler:
 
     def __init__(self, bot):
         self.bot = bot
@@ -11,6 +11,8 @@ class AddHandler:
 
 
     def _register(self):
+
+
         @self.bot.message_handler(func=lambda m: m.text == "Add")
         def on_add(message: Message):
 
@@ -43,4 +45,4 @@ class AddHandler:
 
 
 def register_handlers(bot):
-    AddHandler(bot)
+    MenuHandler(bot)

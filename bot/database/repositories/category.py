@@ -21,26 +21,35 @@ class CategoryRepository:
         """
 
         initial_data = [
-            {"category": "Healthy Groceries", "category_type_id": 1},
-            {"category": "Dairy & Eggs", "category_type_id": 1},
-            {"category": "Health & Personal Care", "category_type_id": 2},
-            {"category": "Utilities & Communication", "category_type_id": 5},
-            {"category": "Self-development", "category_type_id": 4},
-            {"category": "Debts", "category_type_id": 4},
-            {"category": "Sugary & Soft Drinks", "category_type_id": 1},
-            {"category": "Sweets", "category_type_id": 3},
-            {"category": "Entertainment", "category_type_id": 6},
-            {"category": "Household Goods", "category_type_id": 5},
-            {"category": "Transportation", "category_type_id": 7},
-            {"category": "Clothing", "category_type_id": 6},
-            {"category": "Electronics", "category_type_id": 7},
-            {"category": "Takeout & Fast Food", "category_type_id": 3},
-            {"category": "Alcohol", "category_type_id": 3},
-            {"category": "Nicotine", "category_type_id": 3},
-            {"category": "Energy Drinks", "category_type_id": 3},
-            {"category": "Medicine", "category_type_id": 2},
-            {"category": "Sports", "category_type_id": 2},
-            {"category": "Salary", "category_type_id": 2},
+            # Food & Drink (type_id = 1)
+            {"category": "Healthy Eating", "category_type_id": 1},
+            {"category": "Fruits & Vegetables", "category_type_id": 1},
+            {"category": "Water", "category_type_id": 1},
+            {"category": "Dairy Products", "category_type_id": 1},
+            {"category": "Drinks (Juices, Tea, Coffee)", "category_type_id": 1},
+
+            # Harm to Health (type_id = 2)
+            {"category": "Sweets & Pastries", "category_type_id": 2},
+            {"category": "Unhealthy Drinks", "category_type_id": 2},
+            {"category": "Energy Drinks", "category_type_id": 2},
+            {"category": "Fast Food", "category_type_id": 2},
+            {"category": "Alcohol & Tobacco", "category_type_id": 2},
+
+            # Self-Improvement (type_id = 3)
+            {"category": "Education & Courses", "category_type_id": 3},
+            {"category": "Personal Care (Beauty & Health)", "category_type_id": 3},
+            {"category": "Debts", "category_type_id": 3},
+
+            # Lifestyle & Entertainment (type_id = 4)
+            {"category": "Entertainment", "category_type_id": 4},
+            {"category": "Clothing & Accessories", "category_type_id": 4},
+            {"category": "Electronics", "category_type_id": 4},
+            {"category": "Services", "category_type_id": 4},
+
+            # House & Transport (type_id = 5)
+            {"category": "House rent", "category_type_id": 5},
+            {"category": "Household goods", "category_type_id": 5},
+            {"category": "Transport", "category_type_id": 5},
         ]
 
         conn = self.db.connect_to_db()

@@ -17,6 +17,9 @@ class DebtRepository:
         create_sql = """
     CREATE TABLE IF NOT EXISTS debts (
         debt_id   SERIAL PRIMARY KEY,
+         user_id         BIGINT  NOT NULL 
+                        REFERENCES balance(user_id)
+                        ON DELETE CASCADE,
         name      VARCHAR(25) NOT NULL,
         debt_count NUMERIC(10, 2)   NOT NULL,
         purpose     TEXT,
@@ -36,11 +39,12 @@ class DebtRepository:
         finally:
             conn.close()
 
-    def list_debtors(self) -> list[str]:
+    def list_debtors(self, user_id) -> list[str]:
 
         sql_query = """
         SELECT DISTINCT name
         FROM debts
+        WHERE user_id = %s
         ORDER BY name
         """
 
@@ -48,16 +52,16 @@ class DebtRepository:
 
         try:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                cur.execute(sql_query)
+                cur.execute(sql_query, (user_id,))
                 return [row["name"] for row in cur.fetchall()]
         finally:
             conn.close()
 
-    def add_debt(self, name: str, debt_count: float, purpose: str | None = None) -> int:
+    def add_debt(self, user_id: int, name: str, debt_count: float, purpose: str | None = None) -> int:
 
         insert_sql ="""
-        INSERT INTO debts (name, debt_count, purpose)
-        VALUES (%s, %s, %s)
+        INSERT INTO debts (user_id, name, debt_count, purpose)
+        VALUES (%s, %s, %s, %s)
         RETURNING debt_id;
         """
 
@@ -65,10 +69,10 @@ class DebtRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(insert_sql, (name, debt_count, purpose))
+                cur.execute(insert_sql, (user_id, name, debt_count, purpose))
                 conn.commit()
                 new_id = cur.fetchone()[0]
-            logger.info("Inserted debt id=%d name=%s amount=%.2f", new_id, name, debt_count)
+            logger.info("Inserted debt id=%d name=%s amount=%c.2f", new_id, name, debt_count)
             return new_id
         except DatabaseError as e:
             logger.error("Error inserting debt for '%s'", name, exc_info=e)

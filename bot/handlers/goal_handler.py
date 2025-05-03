@@ -46,7 +46,7 @@ class GoalHandler:
             data = self._pending.pop(chat_id, {})
             stuff_name = data.get("stuff_name")
             price = data.get("price")
-            goal_id = self.goals_repo.add_goal(stuff_name=stuff_name, price=price, desc=descr)
+            goal_id = self.goals_repo.add_goal(user_id=chat_id, stuff_name=stuff_name, price=price, desc=descr)
             self.bot.send_message(
                 chat_id,
                 f"✅ Goal #{goal_id} saved:\n"

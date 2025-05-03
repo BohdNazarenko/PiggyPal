@@ -18,14 +18,11 @@ class CategoryTypeRepository:
         """
 
         initial_data = [
-            {"category_type": "Food & Drink", "description": "Groceries, drinks, meals"},
-            {"category_type": "Personal Care", "description": "Personal care, medicine, doctor visits, sports"},
-            {"category_type": "Harm to health", "description": "Alcohol, nicotine, fast food, energy drinks, sweets"},
-            {"category_type": "Self-Improvement", "description": "Education, debts, donations"},
-            {"category_type": "Necessary expenses",
-             "description": "Rent, home interior, loans, debts, financial commitments"},
-            {"category_type": "Entertainment and clothing", "description": "Leisure activities, clothing"},
-            {"category_type": "Transport & Technology", "description": "Transport, electronics, communication"},
+            {"category_type": "Food & Drink", "description": "Groceries, beverages, dining out"},
+            {"category_type": "Harm to Health", "description": "Alcohol, tobacco, fast food, sweets"},
+            {"category_type": "Self-Improvement", "description": "Education, personal care, debt repayment"},
+            {"category_type": "Lifestyle & Entertainment", "description": "Recreation, fashion, gadgets, services"},
+            {"category_type": "House & Transport", "description": "Rent, home goods, commuting"},
         ]
 
         conn = self.db.connect_to_db()
@@ -43,8 +40,6 @@ class CategoryTypeRepository:
             conn.commit()
         finally:
             self.db.close()
-
-
 
     def list_all(self) -> list[dict]:
 

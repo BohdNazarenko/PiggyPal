@@ -19,7 +19,7 @@ class DebtHandler:
             chat_id = message.chat.id
             self._pending[chat_id] = {}
 
-            debtors = self.debt_repo.list_debtors()
+            debtors = self.debt_repo.list_debtors(chat_id)
             keyboard = InlineKeyboardMarkup()
 
             for index, name in enumerate(debtors):
@@ -48,7 +48,7 @@ class DebtHandler:
                 self.bot.register_next_step_handler(call.message, process_name)
             else:
                 index = int(data.split("_")[-1])
-                name = self.debt_repo.list_debtors()[index]
+                name = self.debt_repo.list_debtors(chat_id)[index]
                 self._pending.setdefault(chat_id, {})["name"] = name
                 self.bot.send_message(chat_id, f"Debtor: {name}\nEnter debt amount:")
                 self.bot.register_next_step_handler(call.message, process_amount)
@@ -81,7 +81,7 @@ class DebtHandler:
             data = self._pending.pop(chat_id, {})
             name = data.get("name")
             amount = data.get("amount")
-            debt_id = self.debt_repo.add_debt(name=name, debt_count=amount, purpose=purpose or None)
+            debt_id = self.debt_repo.add_debt(user_id=chat_id, name=name, debt_count=amount, purpose=purpose or None)
             self.bot.send_message(
                 chat_id,
                 f"Debt #{debt_id} saved:\n"
