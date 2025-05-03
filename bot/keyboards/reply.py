@@ -8,9 +8,12 @@ class ReplyKeyboard:
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
         keyboard.row(
             KeyboardButton("Balance"),
-            KeyboardButton("History"),
+            KeyboardButton("History")
         )
+
         keyboard.row(
-            KeyboardButton("Add")
+            KeyboardButton("Add"),
+            KeyboardButton("Currencies")
         )
+
         return keyboard
