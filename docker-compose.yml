@@ -5,12 +5,12 @@ services:
     container_name: piggypal_postgres
     restart: always
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       TZ: Europe/Warsaw
       POSTGRES_USER: piggy
       POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: piggypal_db
     volumes:
-      - C:\Users\bnaza\OneDrive\Документы\BigData_projects\PiggyPal\pgdata:/var/lib/postgresql/data
+      - /Users/bogdanez/Projects/apps\PiggyPal\pgdata:/var/lib/postgresql/data
 
