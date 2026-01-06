@@ -1,6 +1,10 @@
+import logging
+
 from psycopg2 import DatabaseError
 
 from bot.database import DataBase
+
+logger = logging.getLogger(__name__)
 
 
 class IncomesRepository:
@@ -30,7 +34,7 @@ class IncomesRepository:
                 conn.commit()
         except DatabaseError as e:
             conn.rollback()
-            print(f"Error creating income table: {e}")
+            logger.error("Error creating income table", exc_info=e)
             raise
         finally:
             self.db.release_connection(conn)
@@ -53,7 +57,7 @@ class IncomesRepository:
             return new_id
         except DatabaseError as e:
             conn.rollback()
-            print(f"Error inserting income: {e}")
+            logger.error("Error inserting income", exc_info=e)
             raise
         finally:
             self.db.release_connection(conn)

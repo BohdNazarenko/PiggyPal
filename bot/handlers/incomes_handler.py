@@ -1,8 +1,6 @@
-from sqlalchemy.testing import lambda_combinations
 from telebot.types import Message
 
 from bot.database import DataBase, IncomesRepository, BalanceRepository
-from bot.handlers.balance_handler import BalanceHandler
 from bot.keyboards.reply import ReplyKeyboard
 
 

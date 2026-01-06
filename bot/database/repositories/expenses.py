@@ -1,6 +1,10 @@
+import logging
+
 from psycopg2 import DatabaseError
 
 from bot.database import DataBase
+
+logger = logging.getLogger(__name__)
 
 
 class ExpensesRepository:
@@ -32,7 +36,7 @@ class ExpensesRepository:
                 conn.commit()
         except DatabaseError as e:
             conn.rollback()
-            print(f"Error creating expenses table: {e}")
+            logger.error("Error creating expenses table", exc_info=e)
             raise
         finally:
             self.db.release_connection(conn)
