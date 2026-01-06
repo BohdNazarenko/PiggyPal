@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16
     container_name: piggypal_postgres
     restart: always
     ports:
@@ -12,5 +12,5 @@ services:
       POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: piggypal_db
     volumes:
-      - /Users/bogdanez/Projects/apps\PiggyPal\pgdata:/var/lib/postgresql/data
+      - ./pgdata:/var/lib/postgresql/data
 

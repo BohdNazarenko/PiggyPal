@@ -1,6 +1,10 @@
+import logging
+
 from psycopg2 import DatabaseError
 
 from bot.database import DataBase
+
+logger = logging.getLogger(__name__)
 
 
 class ExpensesRepository:
@@ -8,34 +12,36 @@ class ExpensesRepository:
         self.db = db
 
     def init_table(self) -> None:
-
         create_sql = """
         CREATE TABLE IF NOT EXISTS expenses (
-        expense_id      SERIAL PRIMARY KEY,
-        user_id         BIGINT  NOT NULL 
+            id          SERIAL PRIMARY KEY,
+            user_id     BIGINT NOT NULL 
                         REFERENCES balance(user_id)
                         ON DELETE CASCADE,
-        category_id     INTEGER NOT NULL
-                        REFERENCES categories(category_id)
+            category_id INTEGER NOT NULL
+                        REFERENCES categories(id)
                         ON DELETE RESTRICT
                         ON UPDATE CASCADE,
-        amount          NUMERIC(10,2) NOT NULL,
-        created_at      TIMESTAMP DEFAULT NOW()
+            amount      NUMERIC(10,2) NOT NULL,
+            created_at  TIMESTAMPTZ DEFAULT NOW()
         );
         """
+
+        index_sql = "CREATE INDEX IF NOT EXISTS idx_expenses_user_id ON expenses(user_id);"
 
         conn = self.db.connect_to_db()
 
         try:
             with conn.cursor() as cur:
                 cur.execute(create_sql)
+                cur.execute(index_sql)
                 conn.commit()
         except DatabaseError as e:
             conn.rollback()
-            print(f"Error creating expenses table: {e}")
+            logger.error("Error creating expenses table", exc_info=e)
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
 
     def add_expense(self, user_id: int, category_id: int, amount: float) -> int:
@@ -44,7 +50,7 @@ class ExpensesRepository:
         insert_sql = """
         INSERT INTO expenses (user_id, category_id, amount)
         VALUES(%s, %s, %s)
-        RETURNING expense_id;
+        RETURNING id;
         """
 
         conn = self.db.connect_to_db()
@@ -56,6 +62,7 @@ class ExpensesRepository:
                 conn.commit()
             return new_id
         except DatabaseError:
+            conn.rollback()
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)

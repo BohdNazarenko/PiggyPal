@@ -89,14 +89,13 @@ class ExpensesHandler:
                     reply_markup=ReplyKeyboard.get_main_keyboard()
                 )
 
-            exp_id = self.expense_repo.add_expense(user_id=chat_id,category_id=categ_id, amount=amount)
-
+            exp_id = self.expense_repo.add_expense(user_id=chat_id, category_id=categ_id, amount=amount)
             new_balance = self.balance_repo.update_balance(chat_id, -amount)
 
             self.bot.send_message(
                 chat_id,
-                #TODO: change it for human text
-                f"Expense #{exp_id} saved: category={categ_id}, amount={amount:.2f}",
+                f"✅ Expense #{exp_id} saved: {amount:.2f} zł\n"
+                f"💰 New balance: {new_balance:.2f} zł",
                 reply_markup=ReplyKeyboard.get_main_keyboard()
             )
 

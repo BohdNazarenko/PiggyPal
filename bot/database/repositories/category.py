@@ -10,46 +10,46 @@ class CategoryRepository:
 
     def init_table(self) -> None:
         create_sql = """
-            CREATE TABLE IF NOT EXISTS categories(
-                category_id   SERIAL PRIMARY KEY,
-                category      VARCHAR(100) NOT NULL,
-                category_type_id INTEGER   NOT NULL
-                    REFERENCES categories_type(category_type_id)
-                    ON DELETE RESTRICT
-                    ON UPDATE CASCADE             
+        CREATE TABLE IF NOT EXISTS categories (
+            id              SERIAL PRIMARY KEY,
+            name            VARCHAR(100) NOT NULL,
+            category_type_id INTEGER NOT NULL
+                            REFERENCES category_types(id)
+                            ON DELETE RESTRICT
+                            ON UPDATE CASCADE             
         );
         """
 
         initial_data = [
             # Food & Drink (type_id = 1)
-            {"category": "Healthy Eating", "category_type_id": 1},
-            {"category": "Fruits & Vegetables", "category_type_id": 1},
-            {"category": "Water", "category_type_id": 1},
-            {"category": "Dairy Products", "category_type_id": 1},
-            {"category": "Drinks (Juices, Tea, Coffee)", "category_type_id": 1},
+            {"name": "Healthy Eating", "type_id": 1},
+            {"name": "Fruits & Vegetables", "type_id": 1},
+            {"name": "Water", "type_id": 1},
+            {"name": "Dairy Products", "type_id": 1},
+            {"name": "Drinks (Juices, Tea, Coffee)", "type_id": 1},
 
             # Harm to Health (type_id = 2)
-            {"category": "Sweets & Pastries", "category_type_id": 2},
-            {"category": "Unhealthy Drinks", "category_type_id": 2},
-            {"category": "Energy Drinks", "category_type_id": 2},
-            {"category": "Fast Food", "category_type_id": 2},
-            {"category": "Alcohol & Tobacco", "category_type_id": 2},
+            {"name": "Sweets & Pastries", "type_id": 2},
+            {"name": "Unhealthy Drinks", "type_id": 2},
+            {"name": "Energy Drinks", "type_id": 2},
+            {"name": "Fast Food", "type_id": 2},
+            {"name": "Alcohol & Tobacco", "type_id": 2},
 
             # Self-Improvement (type_id = 3)
-            {"category": "Education & Courses", "category_type_id": 3},
-            {"category": "Personal Care (Beauty & Health)", "category_type_id": 3},
-            {"category": "Debts", "category_type_id": 3},
+            {"name": "Education & Courses", "type_id": 3},
+            {"name": "Personal Care (Beauty & Health)", "type_id": 3},
+            {"name": "Debts", "type_id": 3},
 
             # Lifestyle & Entertainment (type_id = 4)
-            {"category": "Entertainment", "category_type_id": 4},
-            {"category": "Clothing & Accessories", "category_type_id": 4},
-            {"category": "Electronics", "category_type_id": 4},
-            {"category": "Services", "category_type_id": 4},
+            {"name": "Entertainment", "type_id": 4},
+            {"name": "Clothing & Accessories", "type_id": 4},
+            {"name": "Electronics", "type_id": 4},
+            {"name": "Services", "type_id": 4},
 
             # House & Transport (type_id = 5)
-            {"category": "House rent", "category_type_id": 5},
-            {"category": "Household goods", "category_type_id": 5},
-            {"category": "Transport", "category_type_id": 5},
+            {"name": "House rent", "type_id": 5},
+            {"name": "Household goods", "type_id": 5},
+            {"name": "Transport", "type_id": 5},
         ]
 
         conn = self.db.connect_to_db()
@@ -57,28 +57,28 @@ class CategoryRepository:
         try:
             with conn.cursor() as cur:
                 cur.execute(create_sql)
-                cur.execute("SELECT COUNT(*) FROM categories;")
+                cur.execute("SELECT COUNT(*) FROM categories")
                 count = cur.fetchone()[0]
                 if count == 0:
                     insert_sql = """
-                        INSERT INTO categories (category, category_type_id)
-                        VALUES (%(category)s, %(category_type_id)s);                
+                        INSERT INTO categories (name, category_type_id)
+                        VALUES (%(name)s, %(type_id)s);                
                     """
                     cur.executemany(insert_sql, initial_data)
             conn.commit()
         finally:
-            self.db.close()
+            self.db.release_connection(conn)
 
 
     def list_by_type(self, type_id: int) -> list[dict]:
 
         sql_query = """
-        SELECT  category_id,
-                category,
+        SELECT  id AS category_id,
+                name AS category,
                 category_type_id
         FROM categories
         WHERE category_type_id = %s
-        ORDER BY category_id
+        ORDER BY id
         """
 
         conn = self.db.connect_to_db()
@@ -88,5 +88,5 @@ class CategoryRepository:
                 cur.execute(sql_query, (type_id,))
                 return cur.fetchall()
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
