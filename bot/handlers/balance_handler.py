@@ -37,7 +37,13 @@ class BalanceHandler:
 
         def save_initial(message: Message):
             chat_id = message.chat.id
-            text = message.text.replace(",", ".")
+            text = message.text
+
+            # If user sends a command, let command handlers process it
+            if text.startswith("/"):
+                return
+
+            text = text.replace(",", ".")
             try:
                 value = float(text)
             except ValueError:
