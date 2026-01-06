@@ -18,15 +18,17 @@ class DebtRepository:
 
         create_sql = """
         CREATE TABLE debts (
-            debt_id     SERIAL PRIMARY KEY,
+            id          SERIAL PRIMARY KEY,
             user_id     BIGINT NOT NULL 
                         REFERENCES balance(user_id)
                         ON DELETE CASCADE,
-            name        VARCHAR(25) NOT NULL,
+            name        VARCHAR(100) NOT NULL,
             amount      NUMERIC(10, 2) NOT NULL,
             purpose     TEXT,
             created_at  TIMESTAMPTZ DEFAULT NOW()
         );
+
+        CREATE INDEX IF NOT EXISTS idx_debts_user_id ON debts(user_id);
         """
 
         conn = self.db.connect_to_db()
@@ -66,7 +68,7 @@ class DebtRepository:
         insert_sql = """
         INSERT INTO debts (user_id, name, amount, purpose)
         VALUES (%s, %s, %s, %s)
-        RETURNING debt_id;
+        RETURNING id;
         """
 
         conn = self.db.connect_to_db()

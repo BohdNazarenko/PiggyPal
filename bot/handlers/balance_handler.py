@@ -1,6 +1,6 @@
 from telebot.types import Message
 
-from bot.database import DataBase, BalanceRepository
+from bot.database import DataBase, BalanceRepository, UserRepository
 from bot.keyboards.reply import ReplyKeyboard
 
 
@@ -9,6 +9,7 @@ class BalanceHandler:
     def __init__(self, bot):
         self.bot = bot
         self.db = DataBase()
+        self.user_repo = UserRepository(self.db)
         self.balance_repo = BalanceRepository(self.db)
         self._register()
 
@@ -17,9 +18,18 @@ class BalanceHandler:
 
         @self.bot.message_handler(commands=['start'])
         def initial_balance(message: Message):
+            user = message.from_user
+            # Create or update user in database
+            self.user_repo.get_or_create(
+                user_id=user.id,
+                username=user.username,
+                first_name=user.first_name,
+                last_name=user.last_name
+            )
+
             self.bot.send_message(
                 message.chat.id,
-                f"Hello, {message.from_user.first_name}! 🎉. "
+                f"Hello, {user.first_name}! 🎉 "
                 f"Enter your balance to start tracking:"
             )
 

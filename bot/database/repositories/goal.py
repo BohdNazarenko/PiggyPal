@@ -17,7 +17,7 @@ class GoalRepository:
 
         create_sql = """
         CREATE TABLE goals (
-            goal_id     SERIAL PRIMARY KEY,
+            id          SERIAL PRIMARY KEY,
             user_id     BIGINT NOT NULL 
                         REFERENCES balance(user_id)
                         ON DELETE CASCADE, 
@@ -26,6 +26,8 @@ class GoalRepository:
             description TEXT,
             created_at  TIMESTAMPTZ DEFAULT NOW()
         );
+
+        CREATE INDEX IF NOT EXISTS idx_goals_user_id ON goals(user_id);
         """
 
         conn = self.db.connect_to_db()
@@ -47,7 +49,7 @@ class GoalRepository:
         sql_insert = """
         INSERT INTO goals (user_id, name, price, description)
         VALUES (%s, %s, %s, %s)
-        RETURNING goal_id;
+        RETURNING id;
         """
 
         conn = self.db.connect_to_db()
