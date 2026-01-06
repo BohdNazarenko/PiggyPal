@@ -41,10 +41,9 @@ class BalanceHandler:
             try:
                 value = float(text)
             except ValueError:
-                return self.bot.send_message(
-                    chat_id,
-                    "Invalid number. Please enter a valid balance:"
-                )
+                self.bot.send_message(chat_id, "Invalid number. Please enter a valid balance:")
+                self.bot.register_next_step_handler(message, save_initial)
+                return
 
             self.balance_repo.set_balance(chat_id, value)
             self.bot.send_message(
