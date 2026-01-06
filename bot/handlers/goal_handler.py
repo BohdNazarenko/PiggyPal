@@ -1,6 +1,6 @@
 from telebot.types import Message
 
-from bot.database import DataBase, GoalsRepository
+from bot.database import DataBase, GoalRepository
 from bot.keyboards.reply import ReplyKeyboard
 
 
@@ -9,7 +9,7 @@ class GoalHandler:
     def __init__(self, bot):
         self.bot = bot
         self.db = DataBase()
-        self.goals_repo = GoalsRepository(self.db)
+        self.goal_repo = GoalRepository(self.db)
         self._pending: dict[int, dict] = {}
         self._register_handlers()
 
@@ -46,7 +46,7 @@ class GoalHandler:
             data = self._pending.pop(chat_id, {})
             stuff_name = data.get("stuff_name")
             price = data.get("price")
-            goal_id = self.goals_repo.add_goal(user_id=chat_id, stuff_name=stuff_name, price=price, desc=descr)
+            goal_id = self.goal_repo.add_goal(user_id=chat_id, stuff_name=stuff_name, price=price, desc=descr)
             self.bot.send_message(
                 chat_id,
                 f"✅ Goal #{goal_id} saved:\n"

@@ -7,7 +7,7 @@ from bot.database import DataBase
 logger = logging.getLogger(__name__)
 
 
-class GoalsRepository:
+class GoalRepository:
 
     def __init__(self, db: DataBase):
         self.db = db
