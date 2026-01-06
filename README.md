@@ -64,6 +64,8 @@ modular architecture and bot development skills.
 
 2. Run the container
 
+
+
 `docker run -d --name piggy_postgres \
   -p 5432:5432 \
   -e POSTGRES_USER=money \
