@@ -1,8 +1,4 @@
-from gc import is_finalized
-
-from numpy.ma.extras import row_stack
-from psycopg2.extras import RealDictConnection, RealDictCursor
-from sqlalchemy.util.preloaded import sql_selectable
+from psycopg2.extras import RealDictCursor
 
 
 class BalanceRepository:
