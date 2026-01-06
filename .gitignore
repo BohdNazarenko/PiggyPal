@@ -2,3 +2,16 @@ docs.tasks.md
 config/.env
 *.env
 /pgdata/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# macOS
+.DS_Store

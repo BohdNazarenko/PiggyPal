@@ -39,7 +39,7 @@ class CategoryTypeRepository:
                     cur.executemany(insert_sql, initial_data)
             conn.commit()
         finally:
-            self.db.close()
+            self.db.release_connection(conn)
 
     def list_all(self) -> list[dict]:
 
@@ -57,4 +57,4 @@ class CategoryTypeRepository:
                 cur.execute(sql_query)
                 return cur.fetchall()
         finally:
-            conn.close()
+            self.db.release_connection(conn)

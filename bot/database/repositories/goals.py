@@ -28,10 +28,11 @@ class GoalsRepository:
                 cur.execute(create_sql)
                 conn.commit()
         except DatabaseError as e:
+            conn.rollback()
             print(f"Error creating goals table: {e}")
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
     def add_goal(self,user_id: int, stuff_name: str, price: float, desc: str | None = None) -> int:
 
@@ -46,10 +47,12 @@ class GoalsRepository:
         try:
             with conn.cursor() as cur:
                 cur.execute(sql_insert, (user_id, stuff_name, price, desc))
+                new_id = cur.fetchone()[0]
                 conn.commit()
-                return cur.fetchone()[0]
-        except ValueError as e:
+                return new_id
+        except DatabaseError as e:
+            conn.rollback()
             print(f"Error inserting goal: {e}")
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)

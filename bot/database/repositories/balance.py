@@ -22,7 +22,7 @@ class BalanceRepository:
                 cur.execute(create_sql)
                 conn.commit()
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
     def get_balance(self, user_id: int) -> float:
 
@@ -36,10 +36,9 @@ class BalanceRepository:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute(sql_select, (user_id,))
                 row = cur.fetchone()
-                conn.commit()
                 return float(row["current_balance"]) if row else 0.00
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
     def set_balance(self, user_id: int, current_balance: float) -> None:
 
@@ -56,7 +55,7 @@ class BalanceRepository:
                 cur.execute(insert_sql, (user_id, current_balance))
                 conn.commit()
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
 
     def update_balance(self, user_id: int, delta: float) -> float:

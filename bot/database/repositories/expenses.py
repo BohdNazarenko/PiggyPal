@@ -35,7 +35,7 @@ class ExpensesRepository:
             print(f"Error creating expenses table: {e}")
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
 
     def add_expense(self, user_id: int, category_id: int, amount: float) -> int:
@@ -56,6 +56,7 @@ class ExpensesRepository:
                 conn.commit()
             return new_id
         except DatabaseError:
+            conn.rollback()
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)

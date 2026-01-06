@@ -34,10 +34,11 @@ class DebtRepository:
                 cur.execute(create_sql)
                 conn.commit()
         except DatabaseError as e:
+            conn.rollback()
             logger.error("Error creating debts table", exc_info=e)
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
     def list_debtors(self, user_id) -> list[str]:
 
@@ -55,7 +56,7 @@ class DebtRepository:
                 cur.execute(sql_query, (user_id,))
                 return [row["name"] for row in cur.fetchall()]
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
     def add_debt(self, user_id: int, name: str, debt_count: float, purpose: str | None = None) -> int:
 
@@ -70,12 +71,13 @@ class DebtRepository:
         try:
             with conn.cursor() as cur:
                 cur.execute(insert_sql, (user_id, name, debt_count, purpose))
-                conn.commit()
                 new_id = cur.fetchone()[0]
-            logger.info("Inserted debt id=%d name=%s amount=%c.2f", new_id, name, debt_count)
+                conn.commit()
+            logger.info("Inserted debt id=%d name=%s amount=%.2f", new_id, name, debt_count)
             return new_id
         except DatabaseError as e:
+            conn.rollback()
             logger.error("Error inserting debt for '%s'", name, exc_info=e)
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)

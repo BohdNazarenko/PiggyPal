@@ -1,4 +1,4 @@
-from psycopg2 import DatabaseError, connect
+from psycopg2 import DatabaseError
 
 from bot.database import DataBase
 
@@ -33,7 +33,7 @@ class IncomesRepository:
             print(f"Error creating income table: {e}")
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)
 
     def add_income(self, user_id: int, amount: float):
 
@@ -52,7 +52,8 @@ class IncomesRepository:
                 conn.commit()
             return new_id
         except DatabaseError as e:
+            conn.rollback()
             print(f"Error inserting income: {e}")
             raise
         finally:
-            conn.close()
+            self.db.release_connection(conn)

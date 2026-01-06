@@ -1,5 +1,4 @@
-from pandas import value_counts
-from telebot.types import CallbackQuery, Message
+from telebot.types import Message
 
 from bot.database import DataBase, BalanceRepository
 from bot.keyboards.reply import ReplyKeyboard
