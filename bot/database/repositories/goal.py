@@ -13,16 +13,18 @@ class GoalRepository:
         self.db = db
 
     def init_table(self) -> None:
+        drop_sql = "DROP TABLE IF EXISTS goals CASCADE;"
+
         create_sql = """
-        CREATE TABLE IF NOT EXISTS goals (
-        goal_id     SERIAL PRIMARY KEY,
-         user_id         BIGINT  NOT NULL 
+        CREATE TABLE goals (
+            goal_id     SERIAL PRIMARY KEY,
+            user_id     BIGINT NOT NULL 
                         REFERENCES balance(user_id)
                         ON DELETE CASCADE, 
-        stuff_name  VARCHAR(25) NOT NULL,
-        price       NUMERIC(10, 2) NOT NULL,
-        description TEXT,
-        created_at  TIMESTAMP DEFAULT NOW()
+            name        VARCHAR(100) NOT NULL,
+            price       NUMERIC(10, 2) NOT NULL,
+            description TEXT,
+            created_at  TIMESTAMPTZ DEFAULT NOW()
         );
         """
 
@@ -30,6 +32,7 @@ class GoalRepository:
 
         try:
             with conn.cursor() as cur:
+                cur.execute(drop_sql)
                 cur.execute(create_sql)
                 conn.commit()
         except DatabaseError as e:
@@ -39,10 +42,10 @@ class GoalRepository:
         finally:
             self.db.release_connection(conn)
 
-    def add_goal(self,user_id: int, stuff_name: str, price: float, desc: str | None = None) -> int:
+    def add_goal(self, user_id: int, name: str, price: float, description: str | None = None) -> int:
 
         sql_insert = """
-        INSERT INTO goals (user_id, stuff_name, price, description)
+        INSERT INTO goals (user_id, name, price, description)
         VALUES (%s, %s, %s, %s)
         RETURNING goal_id;
         """
@@ -51,7 +54,7 @@ class GoalRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(sql_insert, (user_id, stuff_name, price, desc))
+                cur.execute(sql_insert, (user_id, name, price, description))
                 new_id = cur.fetchone()[0]
                 conn.commit()
                 return new_id

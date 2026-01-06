@@ -25,7 +25,7 @@ class GoalHandler:
         def ask_price(message: Message):
             chat_id = message.chat.id
             name = message.text.strip()
-            self._pending[chat_id]["stuff_name"] = name
+            self._pending[chat_id]["name"] = name
             self.bot.send_message(chat_id, f"Name set to {name}. Enter price:")
             self.bot.register_next_step_handler(message, ask_description)
 
@@ -42,17 +42,17 @@ class GoalHandler:
 
         def save_goal(message: Message):
             chat_id = message.chat.id
-            descr = message.text.strip() or None
+            description = message.text.strip() or None
             data = self._pending.pop(chat_id, {})
-            stuff_name = data.get("stuff_name")
+            name = data.get("name")
             price = data.get("price")
-            goal_id = self.goal_repo.add_goal(user_id=chat_id, stuff_name=stuff_name, price=price, desc=descr)
+            goal_id = self.goal_repo.add_goal(user_id=chat_id, name=name, price=price, description=description)
             self.bot.send_message(
                 chat_id,
                 f"✅ Goal #{goal_id} saved:\n"
-                f"• Name: {stuff_name}\n"
+                f"• Name: {name}\n"
                 f"• Price: {price:.2f}\n"
-                f"• Description: {descr or '-'}",
+                f"• Description: {description or '-'}",
                 reply_markup=ReplyKeyboard.get_main_keyboard()
             )
 

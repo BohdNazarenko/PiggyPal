@@ -14,23 +14,26 @@ class DebtRepository:
 
     def init_table(self) -> None:
 
+        drop_sql = "DROP TABLE IF EXISTS debts CASCADE;"
+
         create_sql = """
-    CREATE TABLE IF NOT EXISTS debts (
-        debt_id   SERIAL PRIMARY KEY,
-         user_id         BIGINT  NOT NULL 
+        CREATE TABLE debts (
+            debt_id     SERIAL PRIMARY KEY,
+            user_id     BIGINT NOT NULL 
                         REFERENCES balance(user_id)
                         ON DELETE CASCADE,
-        name      VARCHAR(25) NOT NULL,
-        debt_count NUMERIC(10, 2)   NOT NULL,
-        purpose     TEXT,
-        create_at   TIMESTAMPTZ DEFAULT NOW()
-    );
-    """
+            name        VARCHAR(25) NOT NULL,
+            amount      NUMERIC(10, 2) NOT NULL,
+            purpose     TEXT,
+            created_at  TIMESTAMPTZ DEFAULT NOW()
+        );
+        """
 
         conn = self.db.connect_to_db()
 
         try:
             with conn.cursor() as cur:
+                cur.execute(drop_sql)
                 cur.execute(create_sql)
                 conn.commit()
         except DatabaseError as e:
@@ -58,10 +61,10 @@ class DebtRepository:
         finally:
             self.db.release_connection(conn)
 
-    def add_debt(self, user_id: int, name: str, debt_count: float, purpose: str | None = None) -> int:
+    def add_debt(self, user_id: int, name: str, amount: float, purpose: str | None = None) -> int:
 
-        insert_sql ="""
-        INSERT INTO debts (user_id, name, debt_count, purpose)
+        insert_sql = """
+        INSERT INTO debts (user_id, name, amount, purpose)
         VALUES (%s, %s, %s, %s)
         RETURNING debt_id;
         """
@@ -70,10 +73,10 @@ class DebtRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(insert_sql, (user_id, name, debt_count, purpose))
+                cur.execute(insert_sql, (user_id, name, amount, purpose))
                 new_id = cur.fetchone()[0]
                 conn.commit()
-            logger.info("Inserted debt id=%d name=%s amount=%.2f", new_id, name, debt_count)
+            logger.info("Inserted debt id=%d name=%s amount=%.2f", new_id, name, amount)
             return new_id
         except DatabaseError as e:
             conn.rollback()

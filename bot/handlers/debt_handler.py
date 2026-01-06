@@ -81,7 +81,7 @@ class DebtHandler:
             data = self._pending.pop(chat_id, {})
             name = data.get("name")
             amount = data.get("amount")
-            debt_id = self.debt_repo.add_debt(user_id=chat_id, name=name, debt_count=amount, purpose=purpose or None)
+            debt_id = self.debt_repo.add_debt(user_id=chat_id, name=name, amount=amount, purpose=purpose or None)
             self.bot.send_message(
                 chat_id,
                 f"Debt #{debt_id} saved:\n"
