@@ -14,10 +14,8 @@ class UserRepository:
         self.db = db
 
     def init_table(self) -> None:
-        drop_sql = "DROP TABLE IF EXISTS users CASCADE;"
-
         create_sql = """
-        CREATE TABLE users (
+        CREATE TABLE IF NOT EXISTS users (
             id          BIGINT PRIMARY KEY,
             username    VARCHAR(255),
             first_name  VARCHAR(255),
@@ -30,7 +28,6 @@ class UserRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(drop_sql)
                 cur.execute(create_sql)
                 conn.commit()
         except DatabaseError as e:

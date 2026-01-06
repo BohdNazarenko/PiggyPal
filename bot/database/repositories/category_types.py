@@ -9,10 +9,8 @@ class CategoryTypeRepository:
         self.db = db
 
     def init_table(self) -> None:
-        drop_sql = "DROP TABLE IF EXISTS category_types CASCADE;"
-
         create_sql = """
-        CREATE TABLE category_types (
+        CREATE TABLE IF NOT EXISTS category_types (
             id          SERIAL PRIMARY KEY,
             name        VARCHAR(100) NOT NULL,
             description TEXT
@@ -30,13 +28,15 @@ class CategoryTypeRepository:
         conn = self.db.connect_to_db()
         try:
             with conn.cursor() as cur:
-                cur.execute(drop_sql)
                 cur.execute(create_sql)
-                insert_sql = """
-                    INSERT INTO category_types (name, description)
-                    VALUES (%(name)s, %(description)s);
-                """
-                cur.executemany(insert_sql, initial_data)
+                cur.execute("SELECT COUNT(*) FROM category_types")
+                count = cur.fetchone()[0]
+                if count == 0:
+                    insert_sql = """
+                        INSERT INTO category_types (name, description)
+                        VALUES (%(name)s, %(description)s);
+                    """
+                    cur.executemany(insert_sql, initial_data)
             conn.commit()
         finally:
             self.db.release_connection(conn)

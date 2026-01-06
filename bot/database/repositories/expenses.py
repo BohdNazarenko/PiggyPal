@@ -12,10 +12,8 @@ class ExpensesRepository:
         self.db = db
 
     def init_table(self) -> None:
-        drop_sql = "DROP TABLE IF EXISTS expenses CASCADE;"
-
         create_sql = """
-        CREATE TABLE expenses (
+        CREATE TABLE IF NOT EXISTS expenses (
             id          SERIAL PRIMARY KEY,
             user_id     BIGINT NOT NULL 
                         REFERENCES balance(user_id)
@@ -27,16 +25,16 @@ class ExpensesRepository:
             amount      NUMERIC(10,2) NOT NULL,
             created_at  TIMESTAMPTZ DEFAULT NOW()
         );
-
-        CREATE INDEX IF NOT EXISTS idx_expenses_user_id ON expenses(user_id);
         """
+
+        index_sql = "CREATE INDEX IF NOT EXISTS idx_expenses_user_id ON expenses(user_id);"
 
         conn = self.db.connect_to_db()
 
         try:
             with conn.cursor() as cur:
-                cur.execute(drop_sql)
                 cur.execute(create_sql)
+                cur.execute(index_sql)
                 conn.commit()
         except DatabaseError as e:
             conn.rollback()

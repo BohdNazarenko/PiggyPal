@@ -9,10 +9,8 @@ class BalanceRepository:
         self.db = db
 
     def init_table(self) -> None:
-        drop_sql = "DROP TABLE IF EXISTS balance CASCADE;"
-
         create_sql = """
-        CREATE TABLE balance (
+        CREATE TABLE IF NOT EXISTS balance (
             user_id BIGINT PRIMARY KEY
                     REFERENCES users(id)
                     ON DELETE CASCADE,
@@ -24,7 +22,6 @@ class BalanceRepository:
 
         try:
             with conn.cursor() as cur:
-                cur.execute(drop_sql)
                 cur.execute(create_sql)
                 conn.commit()
         finally:
