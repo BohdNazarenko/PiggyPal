@@ -50,7 +50,7 @@ class ExpensesRepository:
         insert_sql = """
         INSERT INTO expenses (user_id, category_id, amount)
         VALUES(%s, %s, %s)
-        RETURNING expense_id;
+        RETURNING id;
         """
 
         conn = self.db.connect_to_db()

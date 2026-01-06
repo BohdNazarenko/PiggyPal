@@ -46,7 +46,7 @@ class IncomesRepository:
         insert_sql = """
         INSERT INTO incomes(user_id, amount)
         VALUES (%s, %s)
-        RETURNING income_id;
+        RETURNING id;
         """
 
         conn = self.db.connect_to_db()
