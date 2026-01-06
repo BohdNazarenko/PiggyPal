@@ -19,6 +19,8 @@ class BalanceHandler:
         @self.bot.message_handler(commands=['start'])
         def initial_balance(message: Message):
             user = message.from_user
+            chat_id = message.chat.id
+
             # Create or update user in database
             self.user_repo.get_or_create(
                 user_id=user.id,
@@ -27,8 +29,19 @@ class BalanceHandler:
                 last_name=user.last_name
             )
 
+            # Check if user already has a balance
+            existing_balance = self.balance_repo.get_balance(chat_id)
+            if existing_balance is not None:
+                self.bot.send_message(
+                    chat_id,
+                    f"Welcome back, {user.first_name}! 👋\n"
+                    f"Your current balance is {existing_balance:.2f} zloty",
+                    reply_markup=ReplyKeyboard.get_main_keyboard()
+                )
+                return
+
             self.bot.send_message(
-                message.chat.id,
+                chat_id,
                 f"Hello, {user.first_name}! 🎉 "
                 f"Enter your balance to start tracking:"
             )
@@ -61,7 +74,10 @@ class BalanceHandler:
         @self.bot.message_handler(func=lambda message: message.text == "Balance")
         def check_balance(message):
             balance = self.balance_repo.get_balance(message.chat.id)
-            self.bot.send_message(message.chat.id, f"Your current balance is {balance:.2f} zloty")
+            if balance is None:
+                self.bot.send_message(message.chat.id, "You don't have a balance yet. Use /start to set one.")
+            else:
+                self.bot.send_message(message.chat.id, f"Your current balance is {balance:.2f} zloty")
 
 
 def register_handlers(bot):

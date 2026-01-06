@@ -27,8 +27,8 @@ class BalanceRepository:
         finally:
             self.db.release_connection(conn)
 
-    def get_balance(self, user_id: int) -> float:
-
+    def get_balance(self, user_id: int) -> float | None:
+        """Returns balance or None if user has no balance record."""
         sql_select = """
         SELECT amount FROM balance WHERE user_id = %s;
         """
@@ -39,7 +39,7 @@ class BalanceRepository:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute(sql_select, (user_id,))
                 row = cur.fetchone()
-                return float(row["amount"]) if row else 0.00
+                return float(row["amount"]) if row else None
         finally:
             self.db.release_connection(conn)
 
