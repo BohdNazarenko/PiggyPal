@@ -36,12 +36,12 @@ class IncomeHandler:
                 )
 
             income_id = self.incomes_repo.add_income(chat_id, amount)
-
             new_balance = self.balance_repo.update_balance(chat_id, amount)
 
             self.bot.send_message(
                 chat_id,
-                f"Income #{income_id} recorded: {amount:.2f}",
+                f"✅ Income #{income_id} recorded: +{amount:.2f} zł\n"
+                f"💰 New balance: {new_balance:.2f} zł",
                 reply_markup=ReplyKeyboard.get_main_keyboard()
             )
 
